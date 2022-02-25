@@ -1,6 +1,6 @@
 {
   "name": "@iamgx/image-preview",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "image-preview",
   "private": false,
   "main": "./dist/image-preview.umd.min.js",
