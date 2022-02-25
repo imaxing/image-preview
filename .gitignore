@@ -1,0 +1,40 @@
+# server
+server/
+
+.DS_Store
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage
+test/e2e/reports
+selenium-debug.log
+doc/
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# cache
+.sass-cache/
+undefined/
+temp/
+# package-lock.json
+yarn-error.log
+yarn.lock
+package-lock.json
+
+dist/demo.html
+dist/image-preview.common.js
+dist/image-preview.common.1.js
+dist/image-preview.common.2.js
+dist/image-preview.umd.js
+dist/image-preview.umd.1.js
+dist/image-preview.umd.2.js
+dist/image-preview.umd.min.1.js
+dist/image-preview.umd.min.2.js
