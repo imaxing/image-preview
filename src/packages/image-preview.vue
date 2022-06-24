@@ -2,6 +2,9 @@
 export default {
   name: 'ImagePreview',
   data: () => ({ images: [], index: 0, scale: 1, rotate: 0, animation: true, destroy: null, showIndex: true }),
+  mounted() {
+    document.body.style.overflow = 'hidden'
+  },
   render(h) {
     const currentImage = this.images[this.index]
     const renderSvgIcon = ({ w = 20, height = 20, f = 'currentColor', ds, onClick }) => {
@@ -15,23 +18,6 @@ export default {
         ds.map(d => h('path', { attrs: { fill: f, d } }))
       )
     }
-
-    const ImageIcon = renderSvgIcon({
-      f: '#FFAB00',
-      w: 30,
-      height: 30,
-      ds: [
-        'M928 160H96c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h832c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zM338 304c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z m513.9 437.1c-1.4 1.2-3.3 1.9-5.2 1.9H177.2c-4.4 0-8-3.6-8-8 0-1.9 0.7-3.7 1.9-5.2l170.3-202c2.8-3.4 7.9-3.8 11.3-1 0.3 0.3 0.7 0.6 1 1l99.4 118 158.1-187.5c2.8-3.4 7.9-3.8 11.3-1 0.3 0.3 0.7 0.6 1 1l229.6 271.6c2.6 3.3 2.2 8.4-1.2 11.2z'
-      ]
-    })
-
-    const CloseIcon = renderSvgIcon({
-      onClick: () => this.destroy && this.destroy(),
-      ds: [
-        'M806.4 172.8l-633.6 633.6c-12.8 12.8-12.8 32 0 44.8 12.8 12.8 32 12.8 44.8 0l633.6-633.6c12.8-12.8 12.8-32 0-44.8-12.8-12.8-32-12.8-44.8 0z',
-        'M172.8 172.8c-12.8 12.8-12.8 32 0 44.8l633.6 633.6c12.8 12.8 32 12.8 44.8 0 12.8-12.8 12.8-32 0-44.8L217.6 172.8c-12.8-12.8-32-12.8-44.8 0z'
-      ]
-    })
 
     const RotateRightIcon = renderSvgIcon({
       onClick: () => {
@@ -120,13 +106,8 @@ export default {
       ]
     })
 
-    const TopTool = h('div', { class: 'top-tool' }, [
-      h('span', { class: 'image-info' }, [ImageIcon, h('b', [currentImage])]),
-      h('span', [CloseIcon])
-    ])
-
     const BottomTool = h('div', { class: 'bottom-tool' }, [
-      this.showIndex && this.images.length > 0 && h('b', { class: 'index' }, `${this.images.length}/${this.index + 1}`),
+      this.showIndex && this.images.length > 1 && h('b', { class: 'index' }, `${this.images.length}/${this.index + 1}`),
       h('div', { class: 'icons' }, [
         PrevIcon,
         ZoomInIcon,
@@ -144,14 +125,24 @@ export default {
         transform: `scale(${this.scale}) rotate(${this.rotate}deg)`,
         maxWidth: '100%',
         maxHeight: '100%',
-        transition: this.animation
-          ? `transform 0.3s ease-in-out, -webkit-transform 0.3s cubic-bezier(0, -0.04, 0.83, 1.46)`
-          : 'none'
+        transition: this.animation ? `transform linear 0.3s` : 'none'
       },
       attrs: { src: currentImage }
     })
 
-    return h('div', { class: 'image-preview' }, [TopTool, CurrentImage, BottomTool])
+    return h(
+      'div',
+      {
+        class: 'image-preview',
+        on: {
+          click: event => {
+            if (event.target !== event.currentTarget) return
+            this.destroy && this.destroy()
+          }
+        }
+      },
+      [CurrentImage, BottomTool]
+    )
   }
 }
 </script>
@@ -176,8 +167,7 @@ export default {
   cursor: pointer;
 }
 
-.bottom-tool,
-.top-tool {
+.bottom-tool {
   position: absolute;
   left: 0px;
   width: 100%;
@@ -203,20 +193,7 @@ export default {
   transform: translateY(-50%);
   user-select: none;
 }
-.top-tool {
-  top: 0px;
-  height: 60px;
-  background-image: linear-gradient(rgb(14, 22, 36), rgba(14, 22, 36, 0));
-  justify-content: space-between;
-  padding: 0 15px;
-}
-.image-info {
-  display: flex;
-  align-items: center;
-}
-.image-info b {
-  margin-left: 10px;
-}
+
 .icons {
   min-width: 100px;
   padding: 10px 20px;
@@ -245,7 +222,6 @@ export default {
 }
 
 @media (max-width: 767px) {
-  .image-info,
   .bottom-tool .index {
     display: none;
   }
